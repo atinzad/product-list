@@ -1,5 +1,20 @@
 const Products = require("../../models/Product");
 
+exports.fetchProduct = async (productId, next) => {
+  try {
+    const product = Products.findById(productId);
+    if (product) {
+      return product;
+    } else {
+      const error = new Error(`could not find ${productId}`);
+      error.status = 404;
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.controllerHelloWorld = (req, res) => {
   res.send("hello world");
 };
@@ -25,15 +40,8 @@ exports.controllerAddProduct = async (req, res, next) => {
 
 exports.controllerDeleteProduct = async (req, res, next) => {
   try {
-    const { productId } = req.params;
-    const productDeleted = await Products.findByIdAndDelete(productId);
-    if (productDeleted) {
-      res.status(204).end();
-    } else {
-      const error = new Error(`could not find ${productId}`);
-      error.status = 404;
-      next(error);
-    }
+    const productId = req.product._id;
+    res.status(204).end();
   } catch (error) {
     next(error);
   }
@@ -41,18 +49,13 @@ exports.controllerDeleteProduct = async (req, res, next) => {
 
 exports.controllerUpdateProduct = async (req, res, next) => {
   try {
-    const { productId } = req.params;
+    const productId = req.product._id;
     const product = req.body;
     const productUpdated = await Products.findOneAndUpdate(productId, product, {
       new: true,
+      runValidators: true,
     });
-    if (productUpdated) {
-      res.status(200).json({ msg: "Product Updated", payload: productUpdated });
-    } else {
-      const error = new Error(`could not find ${productId}`);
-      error.status = 404;
-      next(error);
-    }
+    res.status(200).json({ msg: "Product Updated", payload: productUpdated });
   } catch (error) {
     next(error);
   }

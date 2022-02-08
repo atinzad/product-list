@@ -5,9 +5,20 @@ const {
   controllerAddProduct,
   controllerDeleteProduct,
   controllerUpdateProduct,
+  fetchProduct,
 } = require("../../apis/products/controllers");
 
 const router = express.Router();
+
+router.param("productId", async (req, res, next, productId) => {
+  try {
+    const product = await fetchProduct(productId, next);
+    req.product = product;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/", controllerHelloWorld);
 

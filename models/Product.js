@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+URLSlugs = require("mongoose-url-slugs");
 
 const ProductSchema = new Schema(
   {
@@ -13,4 +14,5 @@ const ProductSchema = new Schema(
   { timestamps: true }
 );
 
+ProductSchema.plugin(URLSlugs("name"));
 module.exports = model("Product", ProductSchema);
