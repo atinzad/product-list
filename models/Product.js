@@ -10,6 +10,7 @@ const ProductSchema = new Schema(
     color: String,
     quantity: { type: Number, min: 0, required: true },
     price: { type: Number, default: 3 },
+    shop: { type: Schema.Types.ObjectId, ref: "Shop" },
   },
   { timestamps: true }
 );

@@ -1,3 +1,4 @@
+const Product = require("../../models/Product");
 const Products = require("../../models/Product");
 
 exports.fetchProduct = async (productId, next) => {
@@ -15,9 +16,9 @@ exports.fetchProduct = async (productId, next) => {
   }
 };
 
-exports.controllerHelloWorld = (req, res) => {
-  res.send("hello world");
-};
+// exports.controllerHelloWorld = (req, res) => {
+//   res.send("hello world");
+// };
 
 exports.controllerGetProducts = async (req, res, next) => {
   try {
@@ -28,19 +29,10 @@ exports.controllerGetProducts = async (req, res, next) => {
   }
 };
 
-exports.controllerAddProduct = async (req, res, next) => {
-  try {
-    const product = req.body;
-    const productCreated = await Products.create(product);
-    res.status(201).json({ msg: "Created", payload: productCreated });
-  } catch (error) {
-    next(error);
-  }
-};
-
 exports.controllerDeleteProduct = async (req, res, next) => {
   try {
     const productId = req.product._id;
+    await Product.findByIdAndDelete(productId);
     res.status(204).end();
   } catch (error) {
     next(error);
@@ -49,6 +41,9 @@ exports.controllerDeleteProduct = async (req, res, next) => {
 
 exports.controllerUpdateProduct = async (req, res, next) => {
   try {
+    if (req.file) {
+      req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
+    }
     const productId = req.product._id;
     const product = req.body;
     const productUpdated = await Products.findOneAndUpdate(productId, product, {

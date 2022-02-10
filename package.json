@@ -23,6 +23,7 @@
     "dotenv": "^15.0.0",
     "express": "^4.17.2",
     "mongoose": "^6.1.10",
-    "mongoose-url-slugs": "^1.0.2"
+    "mongoose-url-slugs": "^1.0.2",
+    "multer": "^1.4.4"
   }
 }
