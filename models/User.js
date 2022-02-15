@@ -12,6 +12,7 @@ const UserSchema = new Schema(
     email: { type: String, validate: isEmailValid },
     firstName: String,
     lastName: String,
+    shop: { type: Schema.Types.ObjectId, ref: "Shop" },
   },
   { timestamps: true }
 );

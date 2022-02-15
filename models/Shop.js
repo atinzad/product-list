@@ -6,6 +6,7 @@ const ShopSchema = new Schema(
     name: { type: String, required: true },
     image: String,
     products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+    owner: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

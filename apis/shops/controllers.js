@@ -22,16 +22,26 @@ exports.controllerAddProduct = async (req, res, next) => {
     if (req.file) {
       req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
     }
-    const product = req.body;
-    const productCreated = await Products.create(product);
-    await Shops.findOneAndUpdate(
-      req.body.shopId,
-      { $push: { products: productCreated._id } },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+
+    const shop = await Shops.findById(req.body.shopId);
+
+    if (req.user._id.toString() === shop.owner.toString()) {
+      const product = req.body;
+      const productCreated = await Products.create(product);
+      await Shops.findOneAndUpdate(
+        req.body.shopId,
+        { $push: { products: productCreated._id } },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      res.json({ payload: productCreated });
+    } else {
+      const error = new Error(`Unauthorized: not owner of shop`);
+      error.status = 401;
+      next(error);
+    }
     res.status(201).json({ msg: "Created", payload: productCreated });
   } catch (error) {
     next(error);
@@ -52,6 +62,7 @@ exports.controllerAddShop = async (req, res, next) => {
     if (req.file) {
       req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
     }
+    req.body.owner = req.user._id;
     const shop = req.body;
     const shopCreated = await Shops.create(shop);
     res.status(201).json({ msg: "Created", payload: shopCreated });

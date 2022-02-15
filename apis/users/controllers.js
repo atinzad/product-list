@@ -18,9 +18,18 @@ exports.signup = async (req, res, next) => {
     const password = req.body.password;
     const saltRounds = 10;
     req.body.password = await bcrypt.hash(password, saltRounds);
-    const newUser = Users.create(req.body);
-    const payload = generateToken(newUser);
-    res.status(201).json({ msg: "Created", payload: payload });
+    const newUser = await Users.create(req.body);
+    const token = generateToken(newUser);
+    res.status(201).json({ msg: "Created", payload: token });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.signin = async (req, res, next) => {
+  try {
+    const token = generateToken(req.user);
+    res.status(201).json({ msg: "Created", payload: token });
   } catch (error) {
     next(error);
   }

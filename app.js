@@ -6,11 +6,16 @@ const userRoutes = require("./apis/users/routes");
 const connectDb = require("./database/database");
 const path = require("path");
 const cors = require("cors");
+const passport = require("passport");
+const { localStrategy, jwtStrategy } = require("./middleware/passport");
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(passport.initialize());
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 app.use((req, res, next) => {
   console.log(

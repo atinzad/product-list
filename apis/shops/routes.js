@@ -10,6 +10,7 @@ const {
   fetchShop,
   controllerAddProduct,
 } = require("../../apis/shops/controllers");
+const passport = require("passport");
 
 const router = express.Router();
 
@@ -25,9 +26,19 @@ router.param("shopId", async (req, res, next, shopId) => {
 
 router.get("/", controllerGetShops);
 
-router.post("/", upload.single("image"), controllerAddShop);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  controllerAddShop
+);
 
-router.post("/:shopId/products", upload.single("image"), controllerAddProduct);
+router.post(
+  "/:shopId/products",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  controllerAddProduct
+);
 
 router.delete("/:shopId", controllerDeleteShop);
 
